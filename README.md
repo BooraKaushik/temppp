@@ -1,30 +1,5 @@
-# temppp
+Hi Robert,
+Merry Christmas and happy holidays! I came across your job posting for the Java Software Development Engineer role (R0460225) and would like to express my interest. I have a master’s degree in computer science and over two years of experience developing full-stack microservice applications with Java Spring Boot, Angular, MySQL, Docker, and Kubernetes. I’ve also gained valuable experience during my time at CVS Health. Please review my resume, and I’d appreciate the opportunity to discuss this role further.
 
-```import { ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy } from '@angular/router';
-
-export class DefaultRouteReuseStrategy implements RouteReuseStrategy {
-  shouldDetach(route: ActivatedRouteSnapshot): boolean {
-    return false;
-  }
-  store(route: ActivatedRouteSnapshot, detachedTree: DetachedRouteHandle): void {
-  }
-  shouldAttach(route: ActivatedRouteSnapshot): boolean {
-    return false;
-  }
-  retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle|null {
-    return null;
-  }
-  shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
-    return false; // <-- Here is the critical line of code which forces re-creation of the component
-  }
-}```
-
-```@NgModule({
-  providers: [
-    {
-      provide: RouteReuseStrategy,
-      useClass: DefaultRouteReuseStrategy,
-    },
-  ],
-})
-AppModule {}```
+Best regards,
+Kaushik
