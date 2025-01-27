@@ -1,15 +1,14 @@
-To create a stepper like the one shown in the images using Angular Material, you can utilize the MatStepperModule provided by Angular Material. Here’s how you can implement it:
+To create a stepper like the one shown in the images using Angular Material, you can utilize the `MatStepperModule` provided by Angular Material. Here's how you can implement it:
 
-1. Install Angular Material
-
+### 1. Install Angular Material
 Make sure Angular Material is installed in your project:
-
+```bash
 ng add @angular/material
+```
 
-2. Import MatStepperModule
-
-In your app.module.ts, import the necessary modules:
-
+### 2. Import MatStepperModule
+In your `app.module.ts`, import the necessary modules:
+```typescript
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -23,11 +22,11 @@ import { MatButtonModule } from '@angular/material/button';
   bootstrap: [/* Your Main Component */]
 })
 export class AppModule {}
+```
 
-3. Add HTML Template for the Stepper
-
-In the component HTML file, use the <mat-horizontal-stepper> component:
-
+### 3. Add HTML Template for the Stepper
+In the component HTML file, use the `<mat-horizontal-stepper>` component:
+```html
 <mat-horizontal-stepper linear #stepper>
   <!-- Step 1 -->
   <mat-step [completed]="step1Completed" label="Step 1">
@@ -55,11 +54,11 @@ In the component HTML file, use the <mat-horizontal-stepper> component:
     </div>
   </mat-step>
 </mat-horizontal-stepper>
+```
 
-4. Add Component Logic
-
+### 4. Add Component Logic
 In your component TypeScript file, define the logic for managing step completions:
-
+```typescript
 import { Component } from '@angular/core';
 
 @Component({
@@ -82,11 +81,11 @@ export class StepperExampleComponent {
     console.log('Stepper completed');
   }
 }
+```
 
-5. Styling (Optional)
-
+### 5. Styling (Optional)
 You can add custom styles in the component CSS file to match your design:
-
+```css
 mat-horizontal-stepper {
   margin: 20px 0;
 }
@@ -99,9 +98,9 @@ mat-step-header {
 h3 {
   margin: 10px 0;
 }
+```
 
-6. Add Angular Material Theme
-
+### 6. Add Angular Material Theme
 Ensure your project has an Angular Material theme applied to ensure proper styling.
 
 This will create a functional stepper component similar to the one in your screenshots. You can further customize it with additional styles or behaviors as needed. Let me know if you have any questions!
