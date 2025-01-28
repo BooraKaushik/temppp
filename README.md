@@ -1,175 +1,183 @@
-To display custom icons like the ones in your screenshot (e.g., a filled circle for the current step, a checkmark for a completed step), you can use the `MatStepperIcon` directive provided by Angular Material. Here's how to do it:
+Sure! Below is an Angular component template (`client-info.component.html`) and TypeScript logic (`client-info.component.ts`) to dynamically display and manage the data from `data.clientInfo`. The UI structure is based on checkboxes categorized into sections.
 
 ---
 
-### 1. Customize Step Icons
-Modify the stepper to include custom icons for active, completed, and future steps:
-
-#### Updated HTML Template
+### **Component HTML (`client-info.component.html`)**
 ```html
-<mat-horizontal-stepper linear #stepper>
-  <!-- Step 1 -->
-  <mat-step [completed]="step1Completed" label="Step 1">
-    <ng-template matStepLabel>
-      <div>
-        <mat-icon *ngIf="stepper.selectedIndex > 0; else step1Active">done</mat-icon>
-        <ng-template #step1Active>
-          <span *ngIf="stepper.selectedIndex === 0" class="active-icon"></span>
-        </ng-template>
-        Step 1
+<div class="container">
+  <h2>Bulk Updates</h2>
+  
+  <div class="steps">
+    <span>Step 1 → Step 2 → Step 3</span>
+  </div>
+
+  <h3>Step 1: Select Fields to Update</h3>
+
+  <div *ngFor="let section of clientInfoSections">
+    <h4>{{ section.label }}</h4>
+    <div class="section">
+      <div *ngFor="let field of section.fields">
+        <label>
+          <input
+            type="checkbox"
+            [(ngModel)]="field.selected"
+          />
+          {{ field.label }}
+        </label>
       </div>
-    </ng-template>
-    <div>
-      <h3>Step 1: Select Fields to Update</h3>
-      <button mat-button matStepperNext (click)="completeStep1()">Next</button>
     </div>
-  </mat-step>
+  </div>
 
-  <!-- Step 2 -->
-  <mat-step [completed]="step2Completed">
-    <div>
-      <h3>Step 2</h3>
-  </mat-step>
-</mat-horizontal-stepper>```
-
-To implement custom icons in your Angular Material stepper, you'll need to use a combination of Angular Material's `MatStepperIcon` directive and some custom CSS for styling. Below is a detailed example:
-
----
-
-### Updated Implementation for Custom Icons
-
-#### 1. Customize Icons Using `MatStepperIcon`
-You can replace the default icons with custom ones like a checkmark for completed steps or a circle for the current step.
-
-#### Updated HTML Template:
-```html
-<mat-horizontal-stepper linear #stepper>
-  <!-- Step 1 -->
-  <mat-step [completed]="step1Completed">
-    <ng-template matStepLabel>
-      <div class="step-label">
-        <mat-icon *ngIf="step1Completed">check_circle</mat-icon>
-        <span *ngIf="!step1Completed && stepper.selectedIndex === 0" class="active-icon"></span>
-        <span *ngIf="!step1Completed && stepper.selectedIndex !== 0" class="inactive-icon"></span>
-        Step 1
-      </div>
-    </ng-template>
-    <div>
-      <h3>Step 1: Select Fields to Update</h3>
-      <button mat-button matStepperNext (click)="completeStep1()">Next</button>
-    </div>
-  </mat-step>
-
-  <!-- Step 2 -->
-  <mat-step [completed]="step2Completed">
-    <ng-template matStepLabel>
-      <div class="step-label">
-        <mat-icon *ngIf="step2Completed">check_circle</mat-icon>
-        <span *ngIf="!step2Completed && stepper.selectedIndex === 1" class="active-icon"></span>
-        <span *ngIf="!step2Completed && stepper.selectedIndex !== 1" class="inactive-icon"></span>
-        Step 2
-      </div>
-    </ng-template>
-    <div>
-      <h3>Step 2: Select FAFs to Update</h3>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button matStepperNext (click)="completeStep2()">Next</button>
-    </div>
-  </mat-step>
-
-  <!-- Step 3 -->
-  <mat-step>
-    <ng-template matStepLabel>
-      <div class="step-label">
-        <mat-icon *ngIf="stepper.selectedIndex > 2">check_circle</mat-icon>
-        <span *ngIf="stepper.selectedIndex === 2" class="active-icon"></span>
-        <span *ngIf="stepper.selectedIndex !== 2" class="inactive-icon"></span>
-        Step 3
-      </div>
-    </ng-template>
-    <div>
-      <h3>Step 3: Review and Confirm</h3>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button (click)="finishStepper()">Finish</button>
-    </div>
-  </mat-step>
-</mat-horizontal-stepper>
+  <button (click)="saveSelection()">Save Selection</button>
+</div>
 ```
 
 ---
 
-### 2. Add CSS for Icon Styling
-Add custom styles to visually differentiate between active, completed, and future steps.
-
-#### CSS:
-```css
-.step-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-mat-icon {
-  color: green;
-  font-size: 24px;
-}
-
-.active-icon {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background-color: red; /* Color for the current step */
-}
-
-.inactive-icon {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background-color: gray; /* Color for future steps */
-}
-```
-
----
-
-### 3. Add Logic in Component
-Update the logic for step completion in your component.
-
-#### Component Logic:
+### **Component TypeScript (`client-info.component.ts`)**
 ```typescript
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-stepper',
-  templateUrl: './stepper.component.html',
-  styleUrls: ['./stepper.component.css']
+  selector: 'app-client-info',
+  templateUrl: './client-info.component.html',
+  styleUrls: ['./client-info.component.css'],
 })
-export class StepperComponent {
-  step1Completed = false;
-  step2Completed = false;
+export class ClientInfoComponent implements OnInit {
+  @Input() data: any;
+  clientInfoSections: any[] = [];
 
-  completeStep1() {
-    this.step1Completed = true;
+  ngOnInit() {
+    this.initializeClientInfo();
   }
 
-  completeStep2() {
-    this.step2Completed = true;
+  initializeClientInfo() {
+    if (!this.data || !this.data.clientInfo) {
+      console.error('No data available');
+      return;
+    }
+
+    // Define sections dynamically from input data
+    this.clientInfoSections = [
+      {
+        label: 'Client Information',
+        fields: [
+          { label: 'Client Name', key: 'clientName', selected: false },
+          { label: 'Account Name', key: 'accountName', selected: false },
+          { label: 'Analyst', key: 'analyst', selected: false },
+          { label: 'Platform', key: 'platform', selected: false },
+          { label: 'FAF ID', key: 'fafId', selected: false },
+          { label: 'Contract Start Date', key: 'contractStartDate', selected: false },
+          { label: 'Contract End Date', key: 'contractEndDate', selected: false },
+          { label: 'Contract Year', key: 'contractYear', selected: false },
+        ],
+      },
+      {
+        label: 'Reconciliation',
+        fields: [
+          { label: 'Reconcile R30/R60/R90 GER Together', key: 'reconcileGer', selected: false },
+          { label: 'Approved by Reviewer - Checked', key: 'approvedByReviewer', selected: false },
+        ],
+      },
+      {
+        label: 'Flags',
+        fields: [
+          { label: 'Client Flags', key: 'clientFlags', selected: false },
+          { label: 'Manual Client Flags', key: 'manualClientFlags', selected: false },
+        ],
+      },
+      {
+        label: 'Pricing Guarantee Payment Terms',
+        fields: [
+          { label: 'Frequency of Client Payment', key: 'frequencyOfPayment', selected: false },
+          { label: 'Custom Frequency', key: 'customFrequency', selected: false },
+          { label: 'Due Date of Client Payment', key: 'dueDateClientPayment', selected: false },
+        ],
+      },
+      {
+        label: 'Reporting Requirements',
+        fields: [
+          { label: 'Price Change Reporting', key: 'priceChangeReporting', selected: false },
+        ],
+      },
+    ];
   }
 
-  finishStepper() {
-    console.log('Stepper finished');
+  saveSelection() {
+    const selectedFields = this.clientInfoSections.flatMap((section) =>
+      section.fields.filter((field) => field.selected)
+    );
+
+    console.log('Selected Fields:', selectedFields);
   }
 }
 ```
 
 ---
 
-### Explanation:
-1. **Icons Logic:**
-   - The `mat-icon` is displayed for completed steps using `check_circle`.
-   - For the current step, a red circle (`active-icon`) is used.
-   - For future steps, a gray circle (`inactive-icon`) is displayed.
+### **Component Styling (`client-info.component.css`)**
+```css
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
 
-2. **Styling:**
-   - Custom CSS ensures the icons and circles look similar to the screenshot provided.
+.steps {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
 
-This approach ensures your stepper visually aligns with the example in your images. Let me know if you have further questions!
+h3 {
+  margin-top: 20px;
+}
+
+h4 {
+  margin-top: 15px;
+  color: #333;
+}
+
+.section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 10px;
+  background: #fff;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 15px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background: #0056b3;
+}
+```
+
+---
+
+### **How it Works:**
+- The component takes `data.clientInfo` as an `@Input()`, dynamically generating sections.
+- Each section has labeled checkboxes representing fields.
+- Users can select checkboxes, and selections are logged when clicking "Save Selection."
+- The UI is styled for readability.
+
+Would you like any modifications, such as adding a "Select All" button or grouping checkboxes differently?
