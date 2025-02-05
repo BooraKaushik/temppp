@@ -1,62 +1,55 @@
-Using the **banana in a box (`[(ngModel)]`)** model, we need to work with a **TypeScript object instead of `FormGroup`** since `[(ngModel)]` works with simple object properties.
+package com.example.dto;
 
-### **Key Adjustments:**
-1. No need for `FormGroup` or `FormArray`.
-2. Use a simple array of objects with properties.
-3. Bind `[(ngModel)]` directly to the checkboxes.
+import lombok.Getter;
+import lombok.Setter;
+import java.util.Date;
 
----
-
-### ✅ **Updated Code Using `[(ngModel)]`**
-
-#### 📌 **`guarantees.component.ts`**
-```typescript
-import { Component } from '@angular/core';
-
-@Component({
-  selector: 'app-guarantees',
-  templateUrl: './guarantees.component.html',
-  styleUrls: ['./guarantees.component.css']
-})
-export class GuaranteesComponent {
-  guaranteesList = [
-    { id: 'g1', name: 'Guarantee 1', check1: false, check2: false, check3: false, check4: false },
-    { id: 'g2', name: 'Guarantee 2', check1: false, check2: false, check3: false, check4: false },
-    { id: 'g3', name: 'Guarantee 3', check1: false, check2: false, check3: false, check4: false }
-  ];
-
-  submitForm(): void {
-    console.log('Form Values:', this.guaranteesList);
-  }
+@Getter
+@Setter
+public class BulkUpdateClientInformationDTO {
+    private String clientName;
+    private String accountName;
+    private String analyst;
+    private String platform;
+    private String pLCode;
+    private String fafId;
+    private String lobDescriptor;
+    private String lob;
+    private String lobSubType;
+    private Date contractStartDate;
+    private Date contractEndDate;
+    private String contractYear;
+    private Date effPricingStartDate;
+    private Date effPricingEndDate;
+    private Boolean earlyPricing;
+    private Boolean escalatingPricing;
+    private String brandDefinition;
+    private String adjudication;
+    private Boolean authorizedGenericsAsGenerics;
+    private String reconMethod;
+    private Boolean reconcileR3OR90;
+    private Boolean approved;
+    private String peerReviewer;
+    private String clientFlags;
+    private String manualClientFlags;
+    private String timeFrame;
+    private String customTimeFrame;
+    private String dueDate;
+    private String customDueDate;
+    private String paymentTermFreq;
+    private String paymentTermDueDate;
+    private String customPaymentFreq;
+    private String customPaymentDueDate;
+    private String performanceReportingFrequency;
+    private String performanceReportingDueDate;
+    private String customPerfReportingFrequency;
+    private String customPerfReportingDueDate;
+    private String automationFlags;
+    private String gmClientFlags;
+    private Boolean caremarkSpeciality;
+    private Boolean contractLimit;
+    private String contractPercent;
+    private String contractTimePeriod;
+    private Boolean reportingChanges;
+    private String reportingRequirements;
 }
-```
-
----
-
-#### 📌 **`guarantees.component.html`**
-```html
-<form (ngSubmit)="submitForm()">
-  <div *ngFor="let guarantee of guaranteesList">
-    <h3>{{ guarantee.name }}</h3>
-    <div>
-      <label *ngFor="let checkbox of [1,2,3,4]">
-        <input type="checkbox" [(ngModel)]="guarantee['check' + checkbox]" name="{{guarantee.id}}-check{{checkbox}}" />
-        Checkbox {{ checkbox }}
-      </label>
-    </div>
-    <hr />
-  </div>
-
-  <button type="submit">Submit</button>
-</form>
-```
-
----
-
-### 🔥 **How This Works**
-✅ Uses **`banana in a box [(ngModel)]`** for two-way data binding.  
-✅ No need for **FormGroup** or **FormBuilder**.  
-✅ Uses `guarantee['check' + checkbox]` to dynamically bind values.  
-✅ The `name="{{guarantee.id}}-check{{checkbox}}"` ensures proper binding.  
-
-This is the **simplest and most efficient** way to handle checkboxes dynamically with `ngModel`. 🚀 Let me know if you need further tweaks!
