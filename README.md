@@ -1,5 +1,5 @@
 Here’s a Spring Boot DTO (Data Transfer Object) for the BulkUpdateClientInformation class you provided in TypeScript:
-
+```
 package com.example.dto;
 
 import lombok.Getter;
@@ -55,7 +55,7 @@ public class BulkUpdateClientInformationDTO {
     private Boolean reportingChanges;
     private String reportingRequirements;
 }
-
+```
 Notes:
 	1.	Lombok Annotations (@Getter, @Setter): These reduce boilerplate getter and setter methods.
 	2.	Boolean vs. boolean: Used Boolean (wrapper class) to support null values.
