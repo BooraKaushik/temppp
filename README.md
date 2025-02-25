@@ -1,65 +1,107 @@
-Here’s a Spring Boot DTO (Data Transfer Object) for the BulkUpdateClientInformation class you provided in TypeScript:
-```
-package com.example.dto;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import lombok.Getter;
-import lombok.Setter;
-import java.util.Date;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
-@Getter
-@Setter
-public class BulkUpdateClientInformationDTO {
-    private String clientName;
-    private String accountName;
-    private String analyst;
-    private String platform;
-    private String pLCode;
-    private String fafId;
-    private String lobDescriptor;
-    private String lob;
-    private String lobSubType;
-    private Date contractStartDate;
-    private Date contractEndDate;
-    private String contractYear;
-    private Date effPricingStartDate;
-    private Date effPricingEndDate;
-    private Boolean earlyPricing;
-    private Boolean escalatingPricing;
-    private String brandDefinition;
-    private String adjudication;
-    private Boolean authorizedGenericsAsGenerics;
-    private String reconMethod;
-    private Boolean reconcileR3OR90;
-    private Boolean approved;
-    private String peerReviewer;
-    private String clientFlags;
-    private String manualClientFlags;
-    private String timeFrame;
-    private String customTimeFrame;
-    private String dueDate;
-    private String customDueDate;
-    private String paymentTermFreq;
-    private String paymentTermDueDate;
-    private String customPaymentFreq;
-    private String customPaymentDueDate;
-    private String performanceReportingFrequency;
-    private String performanceReportingDueDate;
-    private String customPerfReportingFrequency;
-    private String customPerfReportingDueDate;
-    private String automationFlags;
-    private String gmClientFlags;
-    private Boolean caremarkSpeciality;
-    private Boolean contractLimit;
-    private String contractPercent;
-    private String contractTimePeriod;
-    private Boolean reportingChanges;
-    private String reportingRequirements;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class ClientsServiceImplTest {
+
+    @InjectMocks
+    private ClientsServiceImpl clientsServiceImpl;
+
+    @Mock
+    private ClientsRepository clientsRepository;
+
+    @Mock
+    private ClientConverter clientConverter;
+
+    @Mock
+    private HistoryService historyService;
+
+    @Mock
+    private ClientService clientService;
+
+    @Mock
+    private ExecutorService executorService;
+
+    private final String ANALYST = "testAnalyst";
+    private final String SOURCE_FAF = "testSource";
+
+    @BeforeEach
+    void setUp() {
+        // Mock the repository call
+        when(clientsRepository.findClientsByFafIds(any()))
+                .thenReturn(List.of(new ClientEntity()));
+    }
+
+    @Test
+    void testBulkUpdate_SuccessfulExecution() {
+        // Arrange: Mock conversions
+        when(clientConverter.convertToDTO(any())).thenReturn(new ClientDTO());
+        when(clientConverter.bulkUpdateClient(any(), any(), any(), any(), any()))
+                .thenReturn(new ClientEntity());
+
+        // Act & Assert
+        assertDoesNotThrow(() ->
+                clientsServiceImpl.bulkUpdate(
+                        List.of("faf1", "faf2"),
+                        new ClientDTO(),
+                        List.of(new ClientDetailsDTO()),
+                        ANALYST,
+                        SOURCE_FAF
+                )
+        );
+
+        // Verify interactions
+        verify(clientsRepository, times(1)).findClientsByFafIds(any());
+        verify(historyService, atLeastOnce()).createClientHistoryForClientBulkUpdates(any(), any(), any(), any());
+        verify(clientsRepository, atLeastOnce()).save(any());
+    }
+
+    @Test
+    void testBulkUpdate_EmptyFafIds_NoProcessing() {
+        // Act
+        clientsServiceImpl.bulkUpdate(
+                Collections.emptyList(),
+                new ClientDTO(),
+                Collections.emptyList(),
+                ANALYST,
+                SOURCE_FAF
+        );
+
+        // Verify nothing was called
+        verify(clientsRepository, never()).findClientsByFafIds(any());
+        verify(clientsRepository, never()).save(any());
+    }
+
+    @Test
+    void testBulkUpdate_ExceptionHandling() {
+        // Arrange: Simulate an exception in client conversion
+        when(clientConverter.convertToDTO(any())).thenThrow(new RuntimeException("Conversion Failed"));
+
+        // Act
+        assertDoesNotThrow(() ->
+                clientsServiceImpl.bulkUpdate(
+                        List.of("faf1"),
+                        new ClientDTO(),
+                        List.of(new ClientDetailsDTO()),
+                        ANALYST,
+                        SOURCE_FAF
+                )
+        );
+
+        // Verify execution did not crash completely
+        verify(clientsRepository, times(1)).findClientsByFafIds(any());
+        verify(clientsRepository, never()).save(any()); // Save should never be called
+    }
 }
-```
-Notes:
-	1.	Lombok Annotations (@Getter, @Setter): These reduce boilerplate getter and setter methods.
-	2.	Boolean vs. boolean: Used Boolean (wrapper class) to support null values.
-	3.	Dates: Used Date for date-related fields.
-	4.	Nullable Fields: All fields are non-primitive to allow optional values.
-
-Would you like additional validation annotations (e.g., @NotNull, @Size)?
